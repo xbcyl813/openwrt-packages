@@ -29,11 +29,6 @@ o:value("4", translate("Clash(dTun)"))
 end
 o.description = translate("Select core, clashr support ssr while clash does not.")
 
-
-o = s:option(Flag, "old_conf", translate("Old Config"))
-o.description = translate("Proxy/Proxy Groups/Rule")
-
-
 o = s:option(ListValue, "g_rules", translate("Game Rules"))
 o.default = "0"
 o:value("0", translate("Disable"))
@@ -48,7 +43,7 @@ o:value("1", translate("Enable"))
 o.description = translate("Set custom rules under Setting=>Others , will take effect when client start")
 
 o = s:option(Button, "Apply")
-o.title = translate("Save & Apply")
+o.title = luci.util.pcdata(translate("Save & Apply"))
 o.inputtitle = translate("Save & Apply")
 o.inputstyle = "apply"
 o.write = function()

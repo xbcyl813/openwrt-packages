@@ -11,7 +11,10 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "clash"},alias("admin", "services", "clash", "overview"), _("Clash"), 10).dependent = false
+	local page = entry({"admin", "services", "clash"},alias("admin", "services", "clash", "overview"), _("Clash"), 5)
+	page.dependent = true
+	page.acl_depends = {"luci-app-clash"}
+	
 	entry({"admin", "services", "clash", "overview"},cbi("clash/overview"),_("Overview"), 10).leaf = true
 	entry({"admin", "services", "clash", "client"},cbi("clash/client"),_("Client"), 20).leaf = true
 
@@ -62,6 +65,12 @@ end
 
 local fss = require "luci.clash"
 
+local function uhttp_port()
+	local uhttp_port = luci.sys.exec("uci get uhttpd.main.listen_http |awk -F ':' '{print $NF}'")
+	if uhttp_port ~= "80" then
+		return ":" .. uhttp_port
+	end
+end
 
 local function download_rule()
 	local filename = luci.http.formvalue("filename")
@@ -82,7 +91,7 @@ function action_update_rule()
 end
 
 function action_update()
-	luci.sys.exec("kill $(pgrep /usr/share/clash/update.sh) ; (bash /usr/share/clash/update.sh >/tmp/clash.txt 2>&1) &")
+	luci.sys.exec("kill $(pgrep /usr/share/clash/update.sh) ; (bash /usr/share/clash/update.sh >/usr/share/clash/clash.txt 2>&1) &")
 end
 
 
@@ -320,6 +329,7 @@ function action_status()
 		e_mode = e_mode(),
 		in_use = in_use(),
 		conf_path = conf_path(),
+		uhttp_port = uhttp_port(),
 		typeconf = typeconf()
 	})
 end
